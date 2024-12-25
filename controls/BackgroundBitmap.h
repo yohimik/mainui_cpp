@@ -50,6 +50,8 @@ private:
 	//==========
 	static bool s_bEnableLogoMovie;
 	static Size s_BackgroundImageSize;
+	static bool s_bLoadedSplash;
+	static Size s_SteamBackgroundSize;
 
 	//=============
 	// GameUI-style

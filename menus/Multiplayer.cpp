@@ -60,12 +60,12 @@ void CMenuMultiplayer::_Init( void )
 	banner.SetPicture( ART_BANNER );
 	AddItem( banner );
 
-	AddButton( L( "Internet game" ), L( "View list of a game internet servers and join the one of your choice" ), PC_INET_GAME, UI_InternetGames_Menu, QMF_NOTIFY );
+	AddButton( L( "Internet game" ), L( "View a list of Counter-Strike game servers and join the one of your choice." ), PC_INET_GAME, UI_InternetGames_Menu, QMF_NOTIFY );
 	// AddButton( L( "Spectate game" ), L( "Spectate internet games" ), PC_SPECTATE_GAMES, NoopCb, QMF_GRAYED | QMF_NOTIFY );
-	AddButton( L( "LAN game" ), L( "Set up the game on the local area network" ), PC_LAN_GAME, UI_LanGame_Menu, QMF_NOTIFY );
+	AddButton( L( "LAN game" ), L( "Set up a Counter-Strike game on a local area network." ), PC_LAN_GAME, UI_LanGame_Menu, QMF_NOTIFY );
 	AddButton( L( "GameUI_GameMenu_Customize" ), L( "Choose your player name, and select visual options for your character" ), PC_CUSTOMIZE, UI_PlayerSetup_Menu, QMF_NOTIFY );
-	AddButton( L( "Controls" ), L( "Change keyboard and mouse settings" ), PC_CONTROLS, UI_Controls_Menu, QMF_NOTIFY );
-	AddButton( L( "Done" ), L( "Go back to the Main menu" ), PC_DONE, VoidCb( &CMenuMultiplayer::Hide ), QMF_NOTIFY );
+	AddButton( L( "Controls" ), L( "Change keyboard, mouse, touch and joystick settings." ), PC_CONTROLS, UI_Controls_Menu, QMF_NOTIFY );
+	AddButton( L( "Done" ), L( "Go back to the Main Menu." ), PC_DONE, VoidCb( &CMenuMultiplayer::Hide ), QMF_NOTIFY );
 }
 
 ADD_MENU( menu_multiplayer, CMenuMultiplayer, UI_MultiPlayer_Menu );

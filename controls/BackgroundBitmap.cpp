@@ -23,6 +23,8 @@ GNU General Public License for more details.
 bool CMenuBackgroundBitmap::s_bEnableLogoMovie = false;
 Size CMenuBackgroundBitmap::s_BackgroundImageSize;
 CUtlVector<CMenuBackgroundBitmap::bimage_t> CMenuBackgroundBitmap::s_Backgrounds;
+bool CMenuBackgroundBitmap::s_bLoadedSplash = false;
+Size CMenuBackgroundBitmap::s_SteamBackgroundSize;
 
 CMenuBackgroundBitmap::CMenuBackgroundBitmap() : CMenuBitmap()
 {
@@ -74,8 +76,25 @@ void CMenuBackgroundBitmap::DrawColor()
 
 void CMenuBackgroundBitmap::DrawBackgroundLayout( Point p, int xOffset, int yOffset, float xScale, float yScale )
 {
+	int start, end;
+
+	if ( ui_menu_style->value && s_bLoadedSplash )
+	{
+		end = s_Backgrounds.Count();
+		start = end - 1;
+		s_bEnableLogoMovie = true;
+		s_BackgroundImageSize = s_Backgrounds.Tail().size;
+	}
+	else
+	{
+		start = 0;
+		end = s_bLoadedSplash ? s_Backgrounds.Count() - 1 : s_Backgrounds.Count();
+		s_bEnableLogoMovie = false;
+		s_BackgroundImageSize = s_SteamBackgroundSize;
+	}
+
 	// iterate and draw all the background pieces
-	for (int i = 0; i < s_Backgrounds.Count(); i++)
+	for (int i = start; i < end; i++)
 	{
 		bimage_t &bimage = s_Backgrounds[i];
 
@@ -204,12 +223,12 @@ bool CMenuBackgroundBitmap::LoadBackgroundImage( bool gamedirOnly )
 	pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
 	if( !pfile ) goto freefile;
 
-	s_BackgroundImageSize.w = atoi( token );
+	s_SteamBackgroundSize.w = atoi( token );
 
 	pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
 	if( !pfile ) goto freefile;
 
-	s_BackgroundImageSize.h = atoi( token );
+	s_SteamBackgroundSize.h = atoi( token );
 
 	// Now read all tiled background list
 	while(( pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) )))
@@ -286,16 +305,16 @@ void CMenuBackgroundBitmap::LoadBackground()
 		return;
 
 	// try to load backgrounds from mod
-	if( LoadBackgroundImage( true ) )
-		return; // at first check new gameui backgrounds
+	LoadBackgroundImage( true ); // at first check new gameui backgrounds
 
-	if( CheckBackgroundSplash( true ) )
-		return; // then check won-style
+	s_bLoadedSplash = CheckBackgroundSplash( true ); // then check won-style
 
+	/*
 	// try from base directory
 	if( LoadBackgroundImage( false ) )
 		return; // gameui bgs are allowed to be inherited
 
 	if( CheckBackgroundSplash( false ) )
 		return;
+	*/
 }

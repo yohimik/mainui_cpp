@@ -174,7 +174,10 @@ void CMenuMain::_Init( void )
 	else bCustomGame = false;
 
 	// console
-	console.SetNameAndStatus( L( "GameUI_Console" ), L( "Show console" ) );
+	if( ui_menu_style->value )
+		console.SetNameAndStatus( L( "GameUI_Console" ), NULL );
+	else
+		console.SetNameAndStatus( L( "GameUI_Console" ), L( "Show console" ) );
 	console.iFlags |= QMF_NOTIFY;
 	console.SetPicture( PC_CONSOLE );
 	console.SetVisibility( gpGlobals->developer );
@@ -189,7 +192,7 @@ void CMenuMain::_Init( void )
 	resumeGame.iFlags |= QMF_NOTIFY;
 	resumeGame.onReleased = UI_CloseMenu;
 
-	disconnect.SetNameAndStatus( L( "GameUI_GameMenu_Disconnect" ), L( "Disconnect from server" ) );
+	disconnect.SetNameAndStatus( L( "GameUI_GameMenu_Disconnect" ), L( "Disconnect from server." ) );
 	disconnect.SetPicture( PC_DISCONNECT );
 	disconnect.iFlags |= QMF_NOTIFY;
 	disconnect.onReleased = VoidCb( &CMenuMain::DisconnectDialogCb );
@@ -371,6 +374,11 @@ void CMenuMain::VidInit( bool connected )
 	// now figure out what's visible
 	resumeGame.SetVisibility( connected );
 	disconnect.SetVisibility( connected && !single );
+
+	// they exist in the original and can be mistakenly clicked
+	newGame.SetVisibility( !ui_menu_style->value );
+	hazardCourse.SetVisibility( bTrainMap && !ui_menu_style->value );
+	saveRestore.SetVisibility( !ui_menu_style->value );
 
 	if( connected && single )
 	{

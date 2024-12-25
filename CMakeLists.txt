@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 project(MAINUI)
 
 # By default we require C++11 support.
@@ -58,6 +58,8 @@ list(APPEND MAINUI_SOURCES ${MAINUI_CONTROLS_SOURCES})
 list(APPEND MAINUI_SOURCES ${MAINUI_MENUS_SOURCES})
 list(APPEND MAINUI_SOURCES ${MAINUI_FONT_RENDER_SOURCES})
 add_library(${MAINUI_LIBRARY} MODULE ${MAINUI_SOURCES})
+
+set_target_postfix(${MAINUI_LIBRARY})
 
 if(NOT WIN32 AND NOT MINGW)
 	add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unused-variable)
@@ -108,8 +110,8 @@ if(MAINUI_USE_CUSTOM_FONT_RENDER)
 	add_definitions(-DMAINUI_USE_CUSTOM_FONT_RENDER)
 endif()
 
-install(TARGETS ${MAINUI_LIBRARY} DESTINATION .)
+install(TARGETS ${MAINUI_LIBRARY} DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/")
 
 if(MSVC)
-	install(FILES $<TARGET_PDB_FILE:${MAINUI_LIBRARY}> DESTINATION . OPTIONAL)
+	install(FILES $<TARGET_PDB_FILE:${MAINUI_LIBRARY}> DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/" OPTIONAL)
 endif()
