@@ -191,8 +191,16 @@ void CMenuBackgroundBitmap::Draw()
 	else if( s_BackgroundImageSize.h * yScale > ScreenHeight )
 		yOffset = ( ScreenHeight - s_BackgroundImageSize.h * yScale ) / 2;
 
-
 	DrawBackgroundLayout( p, xOffset, yOffset, xScale, yScale );
+
+	// print CS16Client version
+	char version[32];
+	int stringLen, charH;
+
+	snprintf( version, 32, "cs16-client build %s", EngFuncs::GetCvarString( "cscl_ver" ) );
+
+	EngFuncs::engfuncs.pfnDrawConsoleStringLen( version, &stringLen, &charH );
+	EngFuncs::engfuncs.pfnDrawConsoleString( stringLen * 0.05f, ScreenHeight - charH * 1.05f, version );
 }
 
 bool CMenuBackgroundBitmap::LoadBackgroundImage( bool gamedirOnly )
