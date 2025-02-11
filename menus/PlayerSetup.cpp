@@ -329,7 +329,7 @@ void CMenuPlayerSetup::CMenuCrosshairPreview::Draw()
 	length *= ScreenHeight / 768.0f;
 	delta = ( w / 2 - length ) * 0.5f;
 
-	if( menu_playersetup->crosshairTranslucent.bChecked )
+	if( !menu_playersetup->crosshairTranslucent.bChecked )
 	{
 		EngFuncs::PIC_Set( hWhite, r, g, b, a );
 		EngFuncs::PIC_DrawTrans(x + w / 2, y + delta, 1, length );
@@ -357,6 +357,10 @@ void CMenuPlayerSetup::CMenuCrosshairPreview::Draw()
 		EngFuncs::PIC_Set( hWhite, r, g, b, a );
 		EngFuncs::PIC_DrawAdditive(x + w / 2 + delta, y + h / 2, length, 1 );
 	}
+
+	int textHeight = m_scPos.y - (m_scChSize * 1.5f);
+	uint textflags = ( iFlags & QMF_DROPSHADOW ) ? ETF_SHADOW : 0;
+	UI_DrawString( font, m_scPos.x, textHeight, m_scSize.w, m_scChSize, szName, uiColorHelp, m_scChSize, QM_LEFT, textflags | ETF_FORCECOL );
 
 	// draw the rectangle
 	if( eFocusAnimation == QM_HIGHLIGHTIFFOCUS && IsCurrentSelected() )
@@ -770,22 +774,22 @@ void CMenuPlayerSetup::_Init( void )
 	static const char *sizelist[] = { "Auto-size", "Small", "Medium", "Large" };
 	static CStringArrayModel sizes( sizelist, V_ARRAYSIZE( sizelist ));
 
-	crosshairPreview.SetNameAndStatus( "Crosshair appearance", NULL );
-	crosshairPreview.SetRect( 302, 230 + m_iBtnsNum * 50 + 10, 200, 200 );
+	crosshairPreview.szName = L( "Crosshair appearance" );
+	crosshairPreview.SetRect( 700, 370, 200, 200 );
 	crosshairPreview.hImage = EngFuncs::PIC_Load( "gfx/vgui/crosshair.tga", 0 );
-	crosshairPreview.hWhite = EngFuncs::PIC_Load("*white");
+	crosshairPreview.hWhite = EngFuncs::PIC_Load( "*white" );
 
 	crosshairSize.Setup( &sizes );
-	// crosshairSize.LinkCvar( "cl_crosshair_size", CMenuEditable::CVAR_VALUE );
-	crosshairSize.SetRect( 302, crosshairPreview.pos.y + crosshairPreview.size.h + UI_OUTLINE_WIDTH, 200, 32 );
+	crosshairSize.LinkCvar( "cl_crosshair_size", CMenuEditable::CVAR_VALUE );
+	crosshairSize.SetRect( 700, crosshairPreview.pos.y + crosshairPreview.size.h + UI_OUTLINE_WIDTH, 200, 32 );
 
 	crosshairColor.Setup( &colors );
-	// crosshairColor.LinkCvar( "cl_crosshair_color", CMenuEditable::CVAR_STRING );
-	crosshairColor.SetRect( 302, crosshairSize.pos.y + crosshairSize.size.h + UI_OUTLINE_WIDTH, 200, 32 );
+	crosshairColor.LinkCvar( "cl_crosshair_color", CMenuEditable::CVAR_STRING );
+	crosshairColor.SetRect( 700, crosshairSize.pos.y + crosshairSize.size.h + UI_OUTLINE_WIDTH, 200, 32 );
 
 	crosshairTranslucent.SetNameAndStatus( "Translucent", NULL );
 	crosshairTranslucent.LinkCvar( "cl_crosshair_translucent" );
-	crosshairTranslucent.SetCoord( 302, crosshairColor.pos.y + crosshairColor.size.h + UI_OUTLINE_WIDTH );
+	crosshairTranslucent.SetCoord( 700, crosshairColor.pos.y + crosshairColor.size.h + UI_OUTLINE_WIDTH );
 
 	AddItem( crosshairPreview );
 	AddItem( crosshairSize );
