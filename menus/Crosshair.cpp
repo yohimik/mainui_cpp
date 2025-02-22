@@ -155,8 +155,8 @@ void CMenuCrosshair::_Init( void )
 	weapGap.SetNameAndStatus( L( "Weapon Gap" ), L( "Makes the crosshair gap scale depend on the active weapon" ) );
 	weapGap.LinkCvar( "xhair_gap_useweaponvalue" );
 	
-	save.szName = L( "GameUI_Save" );
-	save.SetPicture("gfx/shell/btn_touch_save");
+	save.szName = L( "Done" );
+	save.SetPicture(PC_DONE);
 	save.onReleased = VoidCb( &CMenuCrosshair::SaveCrosshair );
 	
 	done.szName = L( "GameUI_Cancel" );
