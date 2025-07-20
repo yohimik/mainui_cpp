@@ -67,6 +67,9 @@ if(EMSCRIPTEN)
 
 	target_link_options(${MAINUI_LIBRARY} PRIVATE
 			"-sSIDE_MODULE=1"
+			"-Oz"
+			"--closure 1"
+			"--minify-wasm-imports"
 	)
 else()
 	add_library(${MAINUI_LIBRARY} SHARED ${MAINUI_SOURCES})
