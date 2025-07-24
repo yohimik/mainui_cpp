@@ -252,7 +252,7 @@ void CMenuXhair::_Init()
 	x += 292;
 
 	gap.SetNameAndStatus( L( "Gap" ), NULL );
-	gap.Setup( 0, 15, 1 );
+	gap.Setup( -6, 15, 1 );
 	gap.LinkCvar( "xhair_gap" );
 	gap.SetCoord( x, y );
 	y += 60;
@@ -270,13 +270,13 @@ void CMenuXhair::_Init()
 	y += 60;
 
 	thick.SetNameAndStatus( L( "Thickness" ), NULL );
-	thick.Setup( 0, 11, 1 );
+	thick.Setup( 0, 32, 1 );
 	thick.LinkCvar( "xhair_thick" );
 	thick.SetCoord( x, y );
 	y += 60;
 
 	dynamicScale.SetNameAndStatus( L( "Dynamic scale" ), NULL );
-	dynamicScale.Setup( 0, 2.0f, 0.1f );
+	dynamicScale.Setup( 0, 3.0f, 0.1f );
 	dynamicScale.LinkCvar( "xhair_dynamic_scale" );
 	dynamicScale.SetCoord( x, y );
 	y += 60;
