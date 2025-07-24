@@ -318,17 +318,16 @@ void CMenuXhair::_Init()
 
 void CMenuXhair::Reload()
 {
-	int cvarColor[3] = { 0, 255, 0 };
-	float cvarAlpha = 255.0f;
+	int cvarColor[4] = { 0, 255, 0, 255 };
 
 	CMenuItemsHolder::Reload();
 
-	if ( sscanf( EngFuncs::GetCvarString( "xhair_color" ), "%d %d %d %f", &cvarColor[0], &cvarColor[1], &cvarColor[2], &cvarAlpha ) == 4 )
+	if ( sscanf( EngFuncs::GetCvarString( "xhair_color" ), "%d %d %d %d", &cvarColor[0], &cvarColor[1], &cvarColor[2], &cvarColor[3] ) == 4 )
 	{
 		r.SetCurrentValue( bound( 0, cvarColor[0], 255 ) );
 		g.SetCurrentValue( bound( 0, cvarColor[1], 255 ) );
 		b.SetCurrentValue( bound( 0, cvarColor[2], 255 ) );
-		a.SetCurrentValue( bound( 0.0f, cvarAlpha, 255.0f ) );
+		a.SetCurrentValue( bound( 0, cvarColor[3], 255 ) );
 	}
 }
 
@@ -625,7 +624,7 @@ void CMenuXhair::Save()
 {
 	char colorstr[32];
 
-	snprintf( colorstr, sizeof( colorstr ), "%d %d %d %f", (int)r.GetCurrentValue(), (int)g.GetCurrentValue(), (int)b.GetCurrentValue(), a.GetCurrentValue() );
+	snprintf( colorstr, sizeof( colorstr ), "%d %d %d %d", (int)r.GetCurrentValue(), (int)g.GetCurrentValue(), (int)b.GetCurrentValue(), (int)a.GetCurrentValue() );
 	EngFuncs::CvarSetString( "xhair_color", colorstr );
 
 	additive.WriteCvar();
