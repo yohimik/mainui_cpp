@@ -23,7 +23,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(MAINUI)
 
+# By default we require C++11 support.
+# But it can be overriden with -DMY_COMPILER_SUCKS compiler option
+# It's not recommended and may not work(as it's done only for MSVC6 support)
 set(CMAKE_CXX_STANDARD 11)
+
+set(MAINUI_LIBRARY menu)
 
 option(MAINUI_USE_CUSTOM_FONT_RENDER "Use custom font rendering" ON)
 option(MAINUI_USE_STB "Use stb_truetype.h for rendering(*nix-only)" OFF)
@@ -38,10 +43,42 @@ file(GLOB MAINUI_MENUS_SOURCES "menus/*.cpp" "menus/dynamic/*.cpp")
 file(GLOB MAINUI_FONT_RENDER_SOURCES "font/*.cpp")
 file(GLOB MAINUI_SOURCES "miniutl/*.cpp" "*.cpp")
 
-add_library(menu SHARED ${MAINUI_CONTROLS_SOURCES} ${MAINUI_MENUS_SOURCES} ${MAINUI_FONT_RENDER_SOURCES} ${MAINUI_SOURCES})
+if(CS16CLIENT)
+	add_definitions(-DCS16CLIENT)
+	list(APPEND MAINUI_SOURCES
+		${XASH_SDK}/common/interface.cpp
+		menus/Scoreboard.cpp
+		menus/client/JoinGame.cpp
+		menus/client/JoinClass.cpp
+		menus/client/ClientWindow.cpp
+		)
+endif()
+
+list(APPEND MAINUI_SOURCES ${MAINUI_CONTROLS_SOURCES})
+list(APPEND MAINUI_SOURCES ${MAINUI_MENUS_SOURCES})
+list(APPEND MAINUI_SOURCES ${MAINUI_FONT_RENDER_SOURCES})
+
+if(XASH_EMSCRIPTEN)
+	add_executable(${MAINUI_LIBRARY} ${MAINUI_SOURCES})
+	target_compile_options(${MAINUI_LIBRARY} PRIVATE -fPIC)
+	target_link_options(${MAINUI_LIBRARY} PRIVATE -fPIC -sSIDE_MODULE=1)
+	set_target_properties(${MAINUI_LIBRARY} PROPERTIES SUFFIX ".wasm")
+	set(MAINUI_USE_STB TRUE)
+else()
+	add_library(${MAINUI_LIBRARY} SHARED ${MAINUI_SOURCES})
+endif()
+
+set_target_postfix(${MAINUI_LIBRARY})
 
 if(NOT WIN32 AND NOT MINGW)
 	add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unused-variable)
+else()
+	# Only for MSVC6 compatibility mode! Newer VC does fail with this define
+	# add_definitions(-DMY_COMPILER_SUCKS)
+endif()
+
+if(XASH_SAILFISH)
+	add_definitions(-D__SAILFISH__)
 endif()
 
 if(MAINUI_FONT_SCALE)
@@ -50,7 +87,8 @@ endif()
 
 add_definitions(-DSTDINT_H=<cstdint>)
 
-# Android uses stb_truetype by default for rendering fonts
+# Force stb_truetype for Apple devices, as there is no Apple native font renderer
+# And freetype&fontconfig isn't used on this platform by default
 if(ANDROID)
 	set(MAINUI_USE_STB TRUE)
 endif()
@@ -71,9 +109,9 @@ if(MAINUI_USE_CUSTOM_FONT_RENDER)
 		else()
 			# Use freetype2
 			find_package(PkgConfig)
-			find_package(Freetype REQUIRED)
-			include_directories(${FREETYPE_INCLUDE_DIRS})
-			target_link_libraries(menu ${FREETYPE_LIBRARIES})
+			pkg_check_modules(FT2 REQUIRED freetype2)
+			include_directories(${FT2_INCLUDE_DIRS})
+			target_link_libraries(${MAINUI_LIBRARY} ${FT2_LIBRARIES})
 			add_definitions(-DMAINUI_USE_FREETYPE)
 		endif()
 	endif()
@@ -81,9 +119,8 @@ if(MAINUI_USE_CUSTOM_FONT_RENDER)
 	add_definitions(-DMAINUI_USE_CUSTOM_FONT_RENDER)
 endif()
 
-set_target_postfix(menu)
-install(TARGETS menu DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}")
+install(TARGETS ${MAINUI_LIBRARY} DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/")
 
 if(MSVC)
-	install(FILES $<TARGET_PDB_FILE:menu> DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}" OPTIONAL)
+	install(FILES $<TARGET_PDB_FILE:${MAINUI_LIBRARY}> DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/" OPTIONAL)
 endif()
