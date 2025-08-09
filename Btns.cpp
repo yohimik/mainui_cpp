@@ -47,7 +47,9 @@ UI_LoadBmpButtons
 void UI_LoadBmpButtons()
 {
 	memset( uiStatic.buttonsPics, 0, sizeof( uiStatic.buttonsPics ));
-
+#if XASH_EMSCRIPTEN
+	return;
+#endif
 	if( uiStatic.lowmemory )
 		return;
 
