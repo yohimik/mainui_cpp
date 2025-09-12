@@ -132,18 +132,16 @@ static void UI_InitAliasStrings( void )
 		if( MenuStrings[aliasStrings[i].idx][0]) // check if not initialized by strings.lst
 			continue;
 
-		char token[1024];
-		char token2[1024];
+		char token[64];
 		snprintf( token, sizeof( token ), "StringsList_%d", aliasStrings[i].idx );
 
-		const char *fmt = L( token );
-		if( fmt == token )
-		{
-			fmt = aliasStrings[i].defAliasString;
-		}
+		const char *fmt_str = L( token );
+		if( fmt_str == token ) // not found
+			fmt_str = aliasStrings[i].defAliasString;
 
-		snprintf( token2, sizeof( token2 ), fmt, gMenu.m_gameinfo.title );
-		MenuStrings[aliasStrings[i].idx] = StringCopy( token2 );
+		CUtlString fmt( fmt_str );
+		fmt.Replace( "%s", gMenu.m_gameinfo.title );
+		MenuStrings[aliasStrings[i].idx] = fmt.DetachRawPtr();
 
 		Dictionary_Insert( token, MenuStrings[aliasStrings[i].idx] );
 	}
@@ -418,6 +416,7 @@ static void Localize_AddToDictionary( const char *name, const char *lang )
 		{
 			// Con_DPrintf("New token: %s %s\n", token, szLocString );
 			Localize_ProcessString( token, token );
+			Localize_ProcessString( szLocString, szLocString );
 			Dictionary_Insert( token, szLocString );
 			i++;
 		}
@@ -469,9 +468,6 @@ static void Localize_Init( void )
 		Dictionary_Insert( buf, MenuStrings[i] );
 	}
 
-	// strings.lst compatible aliasstrings then
-	UI_InitAliasStrings ();
-
 	// always load default language translation
 	Localize_InitLanguage( "english" );
 
@@ -479,6 +475,9 @@ static void Localize_Init( void )
 
 	if( language[0] && strcmp( language, "english" ))
 		Localize_InitLanguage( language );
+
+	// strings.lst compatible aliasstrings then
+	UI_InitAliasStrings ();
 }
 
 static void Localize_Free( void )
