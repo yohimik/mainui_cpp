@@ -175,10 +175,7 @@ void CMenuMain::_Init( void )
 	else bCustomGame = false;
 
 	// console
-	if( ui_menu_style->value )
-		console.SetNameAndStatus( L( "GameUI_Console" ), NULL );
-	else
-		console.SetNameAndStatus( L( "GameUI_Console" ), L( "Show console" ) );
+	console.SetNameAndStatus( L( "GameUI_Console" ), NULL );
 	console.iFlags |= QMF_NOTIFY;
 	console.SetPicture( PC_CONSOLE );
 	console.SetVisibility( gpGlobals->developer );
@@ -386,7 +383,7 @@ void CMenuMain::VidInit( bool connected )
 	disconnect.SetVisibility( connected && !single );
 
 	// they exist in the original and can be mistakenly clicked
-	newGame.SetVisibility( !ui_menu_style->value );
+	newGame.SetVisibility( false );
 
 	if( connected && single )
 	{
