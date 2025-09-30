@@ -180,6 +180,10 @@ void CMenuMapListModel::Update( void )
 			break; // unexpected end of file
 		}
 		Q_strncpy( map.desc, token, sizeof( map.desc ));
+
+		if ( !strncmp( map.name, "tr_", 3 ) )
+			continue;
+
 		AddToTail( map );
 	}
 
